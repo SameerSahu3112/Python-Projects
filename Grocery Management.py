@@ -15,7 +15,7 @@ def admin():
     print("4. View Grocery items")
     print("5. Change Price of Grocery items")
     print("6. Back To Main Menu")
-//test manoj
+    
 def main_menu(user_pin=1234,attempt=3):
     print("###### Grocery Management System ######")
     print(" 1. Customer ")
