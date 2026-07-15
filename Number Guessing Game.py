@@ -1,5 +1,5 @@
 import random
-x = random.randint(1,100)
+x = random.randint(1,100) //test
 attempt = 0
 while True:
     y = int(input("How Many Attempts You Want To Make: "))  
