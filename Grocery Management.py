@@ -7,9 +7,13 @@ def customer():
     print("4. Update Cart")
     print("5.Generate Bill")
     print("6.Back To Main Menu")
-    customer_choice = int(input("Enter Your Choice: "))
-    if customer_choice == 1:
-        view_grocery_items()
+    print("7.Search Product")
+    while True:
+        customer_choice = int(input("Enter Your Choice: "))
+        if customer_choice == 1:
+            view_grocery_items()
+        elif customer_choice == 6:
+            break
 
 def admin():
     print("Welcome Owner!")
@@ -19,9 +23,15 @@ def admin():
     print("4. View Grocery items")
     print("5. Change Price of Grocery items")
     print("6. Back To Main Menu")
-    admin_choice = int(input("Enter You Choice: "))
-    if admin_choice == 4:
-        view_grocery_items()
+    print("7. Search Product")
+    while True:
+        admin_choice = int(input("Enter You Choice: "))
+        if admin_choice == 2:
+            update_products_a()
+        elif admin_choice == 4:
+            view_grocery_items()
+        elif admin_choice == 6:
+            break
     
 def main_menu(user_pin=1234,attempt=3):
     print("###### Grocery Management System ######")
@@ -54,34 +64,40 @@ def view_grocery_items():
     print("4.Cooking Essentials")
     print("5.Dairy Products")
     print("6.Beverages")
+    print("7.Exit")
     print("You Will See Item In Order Of Product ID, Product Name, Price, Stock")
-    choice_grocery = int(input("Enter Your Choice No.: "))
-    if choice_grocery == 1:
-       for product in products_Grains_Flour:
-           print(product)
+    
+    while True:
+        choice_grocery = int(input("Enter Your Choice No. For Viewing Grocery: "))
 
-    elif choice_grocery == 2:
-        for product in products_pulses:
-            print(product)
+        if choice_grocery == 1:
+           for product in products_Grains_Flour:
+               print(product)
 
-    elif choice_grocery == 3:
-       for product in product_spices:
-           print(product)
+        elif choice_grocery == 2:
+            for product in products_pulses:
+                print(product)
+
+        elif choice_grocery == 3:
+            for product in product_spices:
+                print(product)
         
-    elif choice_grocery == 4:
-       for product in product_cooking_essential:
-           print(product)
+        elif choice_grocery == 4:
+           for product in product_cooking_essential:
+               print(product)
 
-    elif choice_grocery == 5:
-        for product in product_dairy:
-            print(product)
+        elif choice_grocery == 5:
+            for product in product_dairy:
+                print(product)
 
-    elif choice_grocery == 6:
-       for product in product_beverages:
-           print(product)
+        elif choice_grocery == 6:
+            for product in product_beverages:
+                print(product)
+        elif choice_grocery == 7:
+            break
 
-    else:
-        print("Wrong Input")
+        else:
+            print("Wrong Input")
 
 # [Product ID, Product Name, Price, Stock]
 
@@ -137,5 +153,62 @@ product_beverages = [
     [605, "Energy Drink", 50, 25],
 ]
 
+def update_products_a():
+    print("1.Grains & Flours")
+    print("2.Pulses")
+    print("3.Spices")
+    print("4.Cooking Essentials")
+    print("5.Dairy Products")
+    print("6.Beverages")
+    Grocery_type = int(input("Enter The Grocery Choice: "))
+    id = int(input("Enter The Product ID: "))
+    quantity = int(input("Enter The New Quantity Of Stock: "))
+    if Grocery_type == 1:
+        for product in products_Grains_Flour:
+            if product[0] == id:
+                product[3] += quantity 
+
+    elif Grocery_type == 2:
+        for product in products_pulses:
+            if product[0] == id:
+                product[3] += quantity 
+  
+    elif Grocery_type == 3:
+        for product in product_spices:
+            if product[0] == id:
+                product[3] += quantity 
+  
+    elif Grocery_type == 4:
+        for product in product_cooking_essential:
+            if product[0] == id:
+                product[3] += quantity 
+ 
+    elif Grocery_type == 5:
+        for product in product_dairy:
+            if product[0] == id:
+                product[3] += quantity 
+ 
+    elif Grocery_type == 6:
+        for product in product_beverages:
+            if product[0] == id:
+                product[3] += quantity 
+ 
+    else:
+        print("Invalid Choice")
+
 
 main_menu(user_pin=1234,attempt=3)
+
+
+
+
+                
+
+
+        
+        
+
+
+
+
+
