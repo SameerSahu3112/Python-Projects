@@ -16,6 +16,8 @@ def customer():
             break
         elif customer_choice == 7:
             search_grocery()
+        else:
+            print("Invalid Choice")
 
 
 def admin():
@@ -39,6 +41,12 @@ def admin():
             break
         elif admin_choice == 7:
             search_grocery()
+        elif admin_choice == 5:
+            Change_Price_of_Grocery_items()
+        elif admin_choice == 3:
+            delete_grocery()
+        else:
+            print("Invalid Choice")
     
 def main_menu(user_pin=1234,attempt=3):
     while True:
@@ -178,32 +186,26 @@ def update_products_a():
         for product in products_Grains_Flour:
             if product[0] == id:
                 product[3] += quantity 
-
     elif Grocery_type == 2:
         for product in products_pulses:
             if product[0] == id:
                 product[3] += quantity 
-  
     elif Grocery_type == 3:
         for product in product_spices:
             if product[0] == id:
                 product[3] += quantity 
-  
     elif Grocery_type == 4:
         for product in product_cooking_essential:
             if product[0] == id:
                 product[3] += quantity 
- 
     elif Grocery_type == 5:
         for product in product_dairy:
             if product[0] == id:
                 product[3] += quantity 
- 
     elif Grocery_type == 6:
         for product in product_beverages:
             if product[0] == id:
                 product[3] += quantity 
- 
     else:
         print("Invalid Choice")
 
@@ -261,8 +263,67 @@ def search_grocery():
             if item[0] == item_id:
                 print(item)
             
+def Change_Price_of_Grocery_items():
+
+    id = int(input("Enter The Product ID: "))
+    price = int(input("Enter The New Price: "))
+    for price_update in all_products:
+        if price_update[0] == id:
+            print("Original Price: ",price_update[2])
+            price_update[2] = price
+            print("Price Changed To", price)
+    
+
+def delete_grocery():
+    id = int(input("Enter The Product ID: "))
+    for item_delete in all_products:
+        if item_delete[0] == id:
+            print(item_delete)
+            print("Do You Want To Delete")
+            answer = input("Please Tell (Y/N): ").upper()
+            if answer == "Y":
+                for product in products_Grains_Flour:
+                    if product[0] == id:
+                        products_Grains_Flour.remove(product)
+                        print("Deleted Succesfully")
+                        break
+                for product in products_pulses:
+                    if product[0] == id:
+                        products_pulses.remove(product)
+                        print("Deleted Succesfully")
+                        break                    
+                for product in product_spices:
+                    if product[0] == id:
+                        product_spices.remove(product)
+                        print("Deleted Succesfully")
+                        break        
+                for product in product_cooking_essential:
+                    if product[0] == id:
+                        product_cooking_essential.remove(product)
+                        print("Deleted Succesfully")
+                        break
+                for product in product_dairy:
+                    if product[0] == id:
+                        product_dairy.remove(product)
+                        print("Deleted Succesfully")
+                        break
+                for product in product_beverages:
+                    if product[0] == id:
+                        product_beverages.remove(product)
+                        print("Deleted Succesfully")
+                        break
+ 
+                
+            
+
 
 main_menu(user_pin=1234,attempt=3)
+
+
+ 
+
+    
+
 
 
 
