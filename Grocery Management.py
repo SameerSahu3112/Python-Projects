@@ -16,6 +16,14 @@ def customer():
             break
         elif customer_choice == 7:
             search_grocery()
+        elif customer_choice == 2:
+            add_product_c()
+        elif customer_choice == 3:
+            view_cart()
+        elif customer_choice == 4:
+            update_cart()
+        elif customer_choice == 5:
+            bill()
         else:
             print("Invalid Choice")
 
@@ -312,8 +320,101 @@ def delete_grocery():
                         product_beverages.remove(product)
                         print("Deleted Succesfully")
                         break
- 
+def add_product_c():
+    id_add = int(input("Enter The Id Of The Product You Need To Buy: "))
+    enter_quantity = int(input("Enter The Quantity You Want To Buy: "))
+    found = False
+
+    for item in all_products:
+        if item[0] == id_add:
+            found = True
+            if item[3]>=enter_quantity:
+                print("Product Found")
+                print(item)
+                cart.append([item[0],item[1],item[2],enter_quantity])
+                item[3] -= enter_quantity
+                break
+            else:
+                print("we have only",item[3],"left in the stock")
+
+    if not found:
+        print("Invalid Product ID")
+
+def view_cart():
+    print("You Cart")
+    print(cart)
+
+def update_cart():
+    option_id = int(input("Enter The Id: "))
+    found = False
+    for item in cart:
+        if item[0] == option_id:
+            found = True
+            print("Item Found")
+            quantity_changed = int(input("Enter The New Quantity: "))
+            diff = quantity_changed - item[3]
+            prod = None
+            for p in all_products:
+                if p[0] == option_id:
+                    prod = p
+                    break
+            if diff == 0:
+                print("Quantity unchanged")
+                break
+            if diff > 0:
+                if prod and prod[3] >= diff:
+                    item[3] = quantity_changed
+                    prod[3] -= diff
+                    print("Cart updated")
+                else:
+                    print("Not enough stock to increase quantity")
+                break
+            else:
+                if prod:
+                    prod[3] += -diff
+                if quantity_changed > 0:
+                    item[3] = quantity_changed
+                    print("Cart updated")
+                else:
+                    cart.remove(item)
+                    print("Item removed from cart")
+                break
+    if not found:
+        print("Not In The Cart")
                 
+def bill():
+    total = 0
+    print("If Your Bill Is Above 500 and Lesser Than 1000 You Got 10 Percent Discount ")
+    print("If Your Bill Is Above 1000 And Lesser Than 2000 You Got 20 Percent Discount")
+    print("If You Bill Is Above 2000 You Got 25 Percent Discount")
+    choice = input("Do You Want To Generate Bill (Y/N): ").upper()
+    if choice == 'Y':
+        if len(cart) == 0:
+            print("Cart Is Empty")
+        else:
+            print("Grocery Management System")
+            print(cart)
+            for price in cart:
+                sub_total = price[2]*price[3]
+                total = total + sub_total
+            print("Your  Amount Is $", total)
+            total_gst = 0.05 * total 
+            if total < 500:
+                total_dis = 0
+            elif  total < 1000:
+                total_dis = total * 0.1
+            elif total < 2000:
+                total_dis = total * 0.2
+            else:
+                total_dis = total * 0.25
+
+            total_sub = total_gst + total - total_dis 
+            print("Your Total Amount After 5 Percent GST And Discount Is $: ",total_sub)
+            
+
+
+        
+            
             
 
 
