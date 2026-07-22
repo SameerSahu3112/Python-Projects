@@ -410,13 +410,13 @@ def bill():
 
             total_sub = total_gst + total - total_dis 
             print("Your Total Amount After 5 Percent GST And Discount Is $: ",total_sub)
-            
-
-
-        
-            
-            
-
+            customer_choice = input("Confirm Payment (Y/N): ").upper()
+            if customer_choice == 'Y':
+                cart.clear()
+                print("Payment Successfully")
+                print("Thank You For Shopping")
+            else:
+                print("Payment Cancelled")
 
 main_menu(user_pin=1234,attempt=3)
 
