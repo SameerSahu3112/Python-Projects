@@ -17,5 +17,7 @@ while True:
         else:
             print("Invalid operation")
 
-    except:
+    except ValueError:
         print("Please Enter Number")
+    except ZeroDivisionError:
+        print("You Can't Divide By Zero")
