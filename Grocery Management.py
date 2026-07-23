@@ -324,21 +324,35 @@ def add_product_c():
     id_add = int(input("Enter The Id Of The Product You Need To Buy: "))
     enter_quantity = int(input("Enter The Quantity You Want To Buy: "))
     found = False
-
-    for item in all_products:
-        if item[0] == id_add:
+    for product in cart:
+        if product[0] == id_add:
             found = True
-            if item[3]>=enter_quantity:
-                print("Product Found")
-                print(item)
-                cart.append([item[0],item[1],item[2],enter_quantity])
-                item[3] -= enter_quantity
+            product[3] += enter_quantity
+            for item in all_products:
+                if item[0] == id_add:
+                    item[3] -= enter_quantity
+                    break
+            print("Item Already In Your Cart")
+            print("Item Added To Your Cart")
+            break
+
+    if not found:
+        for item in all_products:
+            if item[0] == id_add:
+                found = True
+                if item[3] >= enter_quantity:
+                    print("Product Found")
+                    print(item)
+                    cart.append([item[0], item[1], item[2], enter_quantity])
+                    item[3] -= enter_quantity
+                    print("Item Added To Your Cart")
+                else:
+                    print("we have only", item[3], "left in the stock")
                 break
-            else:
-                print("we have only",item[3],"left in the stock")
 
     if not found:
         print("Invalid Product ID")
+
 
 def view_cart():
     print("You Cart")
