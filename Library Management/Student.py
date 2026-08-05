@@ -3,8 +3,8 @@ def student_menu():
     if student_choice == 'Y':
         print("Login")
         try:
-            id_check = input("Enter Your Student ID: ")
-            password_check = input("Enter Your Password: ")
+            id_check = int(input("Enter Your Student ID: "))
+            password_check = int(input("Enter Your Password: "))
         except ValueError:
             print("Enter Valid ID")
             from Connection import create_connection

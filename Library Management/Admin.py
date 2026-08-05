@@ -1,4 +1,4 @@
-def pin_check(pin=1234,attempt=3):
+def pin_check(pin="1234",attempt=3):
     while True:
         user_pin = input("Please Enter Your 4-Digit PIN: ")
         if user_pin == pin:
@@ -49,10 +49,10 @@ def book_status():
     from Connection import create_connection
     db = create_connection()
     mycursor = db.cursor()
-    mycursor.execute("SELECT status FROM books")
+    mycursor.execute("SELECT book_name, status FROM books")
     status = mycursor.fetchall()
     for s in status:
-        print(s[0])
+        print(s[0], ":", s[1])
 
 def view_books():
     from Connection import create_connection
