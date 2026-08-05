@@ -102,6 +102,13 @@ def menu():
         except ValueError:
             print("Invalid Input")
             continue
+        if choice == 1:
+            book_management()
+        elif choice == 2:
+            student_management()
+        else:
+            print("Exiting.....")
+            break
             
 def book_management():
     while True:
@@ -134,3 +141,71 @@ def book_management():
             break
         else:
             print("Invalid Input")
+
+def view_students():
+    from Connection import create_connection
+    db = create_connection()
+    mycursor = db.cursor()
+    student_id = input("Enter The ID Of The Student: ").strip()
+    if not student_id:
+        mycursor.execute("SELECT * FROM students")
+    else:                            
+        mycursor.execute("SELECT * FROM students WHERE student_id = %s", (student_id,))
+        result = mycursor.fetchall()
+        for r in result:    
+            print(r) 
+
+def delete_student():
+    student_id = input("Enter The ID Of The Student You Want To Delete: ").strip()
+    from Connection import create_connection
+    db = create_connection()
+    mycursor = db.cursor()
+    delete = "DELETE FROM students WHERE student_id = %s"
+    mycursor.execute(delete, (student_id,))
+    db.commit()
+    print("Student Deleted Successfully!")
+
+def student_management():
+    while True:
+        print("#### Student Management ####")
+        print("1. View Students")
+        print("2. Delete Student")
+        print("3. Active Students")
+        print("4. Exit")
+        try:
+            choice = int(input("Enter Your Choice: "))
+        except ValueError:
+            print("Invalid Input")
+            continue
+        if choice == 1:
+            view_students()
+        elif choice == 2:
+            delete_student()
+        elif choice == 3:
+            active_student()
+        elif choice == 4:
+            break
+        else:
+            print("Invalid Input")
+
+def active_student():
+    try:
+        student_id = int(input("Enter The ID Of The Student: "))
+    except ValueError:
+        print("Invalid Input")
+        return 
+    from Connection import create_connection
+    db = create_connection()
+    mycursor = db.cursor()
+    query = "SELECT book_id FROM issue_books WHERE student_id = %s AND status = 'Borrowed' "
+    mycursor.execute(query, (student_id))
+    books = mycursor.fetchall()
+    for book in books:
+        print(book[0])
+    query_name = "SELECT book_name FROM books WHERE book_id = %s"
+    mycursor.execute(query_name, (student_id))
+    name = mycursor.fetchall()
+    for names in name:
+        print(names[0])
+
+

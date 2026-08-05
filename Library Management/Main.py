@@ -29,5 +29,5 @@ def menu():
             else:
                 print("Invalid Input. Please Enter A Valid Option.")
 
-
+menu()
 
