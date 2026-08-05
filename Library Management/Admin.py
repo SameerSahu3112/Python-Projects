@@ -3,6 +3,7 @@ def pin_check(pin=1234,attempt=3):
         user_pin = input("Please Enter Your 4-Digit PIN: ")
         if user_pin == pin:
             print("Access Granted!")
+            menu()
             break
 
         else:
@@ -90,4 +91,46 @@ def update_book():
     db.commit()
     print("Book Updated Successfully!")
 
-
+def menu():
+    while True:
+        print("#### Welcome To Library ####")
+        print("1.Book Management")
+        print("2.Student Management")
+        print("3.Exit")
+        try:
+            choice = int(input("Enter Your Choice: "))
+        except ValueError:
+            print("Invalid Input")
+            continue
+            
+def book_management():
+    while True:
+        print("#### Book Management ####")
+        print("1. Add Book")
+        print("2. Delete Book")
+        print("3. View Books")
+        print("4. Update Book")
+        print("5. Book Status")
+        print("6. Book History")
+        print("7. Exit")
+        try:
+            choice = int(input("Enter Your Choice: "))
+        except ValueError:
+            print("Invalid Input")
+            continue
+        if choice == 1:
+            add_book()
+        elif choice == 2:
+            delete_book()
+        elif choice == 3:
+            view_books()
+        elif choice == 4:
+            update_book()
+        elif choice == 5:
+            book_status()
+        elif choice == 6:
+            print("It Is Not Implemented Yet")
+        elif choice == 7:
+            break
+        else:
+            print("Invalid Input")
