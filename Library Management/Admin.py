@@ -5,7 +5,6 @@ def pin_check(pin="1234",attempt=3):
             print("Access Granted!")
             menu()
             break
-
         else:
             attempt -= 1
             print("Incorrect PIN. You Have ", attempt, "Attempts Left.")
@@ -136,7 +135,7 @@ def book_management():
         elif choice == 5:
             book_status()
         elif choice == 6:
-            print("It Is Not Implemented Yet")
+            book_history()
         elif choice == 7:
             break
         else:
@@ -171,7 +170,8 @@ def student_management():
         print("1. View Students")
         print("2. Delete Student")
         print("3. Active Students")
-        print("4. Exit")
+        print("4. Student History")
+        print("5. Exit")
         try:
             choice = int(input("Enter Your Choice: "))
         except ValueError:
@@ -184,9 +184,34 @@ def student_management():
         elif choice == 3:
             active_student()
         elif choice == 4:
+            student_history()
+        elif choice == 5:
             break
         else:
             print("Invalid Input")
+
+def book_history():
+    from Connection import create_connection
+    db = create_connection()
+    mycursor = db.cursor()
+    book_id = input("Enter The ID Of The Book: ").strip()
+    if not book_id:
+        print("Book ID is required!")
+        return
+    query = """
+        SELECT b.book_name, COUNT(*) AS issue_count
+        FROM issue_books ib
+        JOIN books b ON ib.book_id = b.book_id
+        WHERE ib.book_id = %s
+        GROUP BY b.book_name
+    """
+    mycursor.execute(query, (book_id,))
+    result = mycursor.fetchone()
+    if result:
+        print(result[0], "has been issued", result[1], "times.")
+    else:
+        print("No history found for this book.")
+
 
 def active_student():
     try:
@@ -197,7 +222,7 @@ def active_student():
     from Connection import create_connection
     db = create_connection()
     mycursor = db.cursor()
-    query = "SELECT book_id FROM issue_books WHERE student_id = %s AND status = 'Borrowed' "
+    query = "SELECT book_id FROM issue_books WHERE student_id = %s AND status = 'issued' "
     mycursor.execute(query, (student_id))
     books = mycursor.fetchall()
     for book in books:
@@ -208,4 +233,31 @@ def active_student():
     for names in name:
         print(names[0])
 
-
+def student_history():
+    try:
+        student_id = int(input("Enter The ID Of The Student: "))
+    except ValueError:
+        print("Invalid Input")
+        return 
+    from Connection import create_connection
+    db = create_connection()
+    mycursor = db.cursor()
+    query = "SELECT * FROM students WHERE student_id = %s"
+    mycursor.execute(query, (student_id,))
+    result = mycursor.fetchone()
+    query_history = "SELECT b.book_name, ib.status FROM issued_books ib JOIN books b ON ib.book_id = b.book_id WHERE ib.student_id = %s"
+    mycursor.execute(query_history, (student_id,))
+    history = mycursor.fetchall()
+    if history:             
+        print("Borrowed Books:")
+        for h in history:
+            print("Book Name:", h[0], "| Status:", h[1])
+    else:
+        print("No borrowed books found.")
+    if result:
+        print("Student ID:", result[0])
+        print("Name:", result[1])
+        print("Phone:", result[2])
+        print("Date of Birth:", result[3])
+    else:
+        print("No student found with this ID.")
