@@ -31,8 +31,13 @@ def add_book():
         return
     books = "INSERT INTO books (book_name, author_name, series_name) VALUES(%s, %s, %s)"
     mycursor.execute(books, (book_name, author_name, series_name))
-    db.commit()
     print("Book Added Successfully!")
+    mycursor.execute("SELECT LAST_INSERT_ID()")
+    book_id = mycursor.fetchone()[0]
+    print("Your Book ID Is ",book_id)
+    db.commit()
+    db.close()
+    return 
 
 def delete_book():
     book_id = input("Enter The ID of The Book You Want To Delete: ")
@@ -40,7 +45,7 @@ def delete_book():
     db = create_connection()
     mycursor = db.cursor()
     delete = "DELETE FROM books WHERE book_id = %s"
-    mycursor.execute(delete, (book_id))
+    mycursor.execute(delete, (book_id,))
     db.commit()
     print("Book Deleted Successfully!")
 
@@ -58,12 +63,11 @@ def view_books():
     db = create_connection()
     mycursor = db.cursor()
     author_name = input("Enter The Name Of The Author: ").strip()
-    if not author_name:
-        series_name = input("Enter The Name Of The Series: ").strip()
-        if not series_name:
-            book_name = input("Enter The Name Of The Book: ").strip()
-    view = "SELECT * FROM books WHERE author_name = %s OR series_name = %s OR book_name = %s"
-    mycursor.execute(view, (author_name,series_name,book_name))
+    series_name = input("Enter The Name Of The Series: ").strip()
+    book_name = input("Enter The Name Of The Book: ").strip()
+    book_id = int(input("Enter The ID Of The Book: ").strip())
+    view = "SELECT * FROM books WHERE author_name = %s OR series_name = %s OR book_name = %s OR book_id = %s"
+    mycursor.execute(view, (author_name,series_name,book_name,book_id))
     result = mycursor.fetchall()
     for r in result:
         print(r)
@@ -200,7 +204,7 @@ def book_history():
         return
     query = """
         SELECT b.book_name, COUNT(*) AS issue_count
-        FROM issue_books ib
+        FROM issued_books ib
         JOIN books b ON ib.book_id = b.book_id
         WHERE ib.book_id = %s
         GROUP BY b.book_name
