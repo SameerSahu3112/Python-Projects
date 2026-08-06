@@ -7,36 +7,40 @@ def student_menu():
             password_check = int(input("Enter Your Password: "))
         except ValueError:
             print("Enter Valid ID")
-            from Connection import create_connection
-            db = create_connection()
-            mycursor = db.cursor()
-            query = "SELECT * FROM students WHERE student_id = %s AND Date_of_birth = %s"
-            mycursor.execute(query, (id_check, password_check))
-            result = mycursor.fetchone()
-            if result:
-                print("Login Successful!")
-                menu()
-            else:
-                print("Invalid ID or Password!")
-                print("Password Is Your Date Of Birth (DD-MM-YYYY)")
-            db.close()
+        from Connection import create_connection
+        db = create_connection()
+        mycursor = db.cursor()
+        query = "SELECT * FROM students WHERE student_id = %s AND dob = %s"
+        mycursor.execute(query, (id_check, password_check))
+        result = mycursor.fetchone()
+        if result:
+            print("Login Successful!")
+            menu()
+        else:
+            print("Invalid ID or Password!")
+            print("Password Is Your Date Of Birth (DD-MM-YYYY)")
     else:
         print("Register")
         try:
             student_name = input("Enter Your Name: ")
-            phone = input("Enter Phone Number: ")
+            phone = int(input("Enter Phone Number: "))
             date_of_birth = input("Enter Your Date Of Birth (DD-MM-YYYY): ")
         except ValueError:
             print("Enter Valid Information")
         print("Registration Successful!")
         print("Your Password Is Your Date Of Birth")
-        print("Your Student ID Is ",student_id)
-        query = "INSERT INTO students (student_name, phone, Date_of_birth) VALUES(%s, %s, %s)"
+        from Connection import create_connection
+        db = create_connection()
+        mycursor = db.cursor()
+        query = "INSERT INTO students (name_student, phone, dob) VALUES(%s, %s, %s)"
         mycursor.execute(query, (student_name, phone, date_of_birth))
         db.commit()
         mycursor.execute("SELECT LAST_INSERT_ID()")
         student_id = mycursor.fetchone()[0]
-    db.close()
+        print("Your Student ID Is ",student_id)
+        db.close()
+        menu()
+        return 
 
 def issue_books():
     print("Issue Books")
@@ -63,7 +67,6 @@ def issue_books():
     mycursor.execute(query_insert, (book_id, student_id))
     mycursor.execute(query_update, (book_id,))
     db.commit()
-    db.close()
     print("Book issued successfully.")
 
 def return_books():
@@ -95,7 +98,6 @@ def return_books():
     mycursor.execute(query_delete, (book_id, student_id))
     mycursor.execute(query_update, (book_id,))
     db.commit()
-    db.close()
     print("Book returned successfully.")
 
 def profile():
@@ -127,7 +129,6 @@ def profile():
             print("Book Name:", h[0], "| Status:", h[1])
     else:
         print("No borrowed books found.")   
-    db.close()
 
 def borrowed_books():
     print("Borrowed Books")
@@ -147,7 +148,6 @@ def borrowed_books():
             print("Book Name:", r[0], "| Status:", r[1])
     else:
         print("No Current Issued books found.")
-    db.close()
 
 def menu():
     while True:
