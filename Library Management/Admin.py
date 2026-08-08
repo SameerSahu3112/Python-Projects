@@ -65,20 +65,36 @@ def view_books():
     author_name = input("Enter The Name Of The Author: ").strip()
     series_name = input("Enter The Name Of The Series: ").strip()
     book_name = input("Enter The Name Of The Book: ").strip()
-    book_id = int(input("Enter The ID Of The Book: ").strip())
-    view = "SELECT * FROM books WHERE author_name = %s OR series_name = %s OR book_name = %s OR book_id = %s"
-    mycursor.execute(view, (author_name,series_name,book_name,book_id))
-    result = mycursor.fetchall()
-    for r in result:
-        print(r)
-    if not result:
-        print("No Books Found!")
-    if not book_name and not series_name and not author_name:
-        view_books = "SELECT * FROM books"
-        mycursor.execute(view_books)
+    book_id = input("Enter The ID Of The Book: ").strip()
+    conditions = []
+    values = []
+    if author_name:
+        conditions.append("author_name LIKE %s")
+        values.append(f"%{author_name}%")
+    if series_name:
+        conditions.append("series_name LIKE %s")
+        values.append(f"%{series_name}%")
+    if book_name:
+        conditions.append("book_name LIKE %s")
+        values.append(f"%{book_name}%")
+    if book_id:
+        conditions.append("book_id = %s")
+        values.append(book_id)
+    if conditions:
+        view = "SELECT * FROM books WHERE " + " OR ".join(conditions)
+        mycursor.execute(view, tuple(values))
         result = mycursor.fetchall()
         for r in result:
             print(r)
+        if not result:
+            print("No Books Found!")
+    else:
+        view = "SELECT * FROM books"
+        mycursor.execute(view)
+        result = mycursor.fetchall()
+        for r in result:
+            print(r)
+
 
 def update_book():
     id_book = input("Enter The ID Of The Book: ").strip()
@@ -159,14 +175,23 @@ def view_students():
             print(r) 
 
 def delete_student():
-    student_id = input("Enter The ID Of The Student You Want To Delete: ").strip()
+    try:
+        student_id = int(input("Enter The ID Of The Student You Want To Delete: ").strip())
+    except ValueError:
+        print("Invalid Input. Please Enter Numeric Values.")
+    if not student_id:
+        choice = print("Do You Want To Delete The Student? (Y/N): ")
+        if choice.lower() == 'y':
+            delete_student()
+        else:
+            print("Student Deletion Cancelled.")
     from Connection import create_connection
     db = create_connection()
     mycursor = db.cursor()
     delete = "DELETE FROM students WHERE student_id = %s"
     mycursor.execute(delete, (student_id,))
-    db.commit()
     print("Student Deleted Successfully!")
+    db.commit()
 
 def student_management():
     while True:
@@ -227,12 +252,12 @@ def active_student():
     db = create_connection()
     mycursor = db.cursor()
     query = "SELECT book_id FROM issue_books WHERE student_id = %s AND status = 'issued' "
-    mycursor.execute(query, (student_id))
+    mycursor.execute(query, (student_id,))
     books = mycursor.fetchall()
     for book in books:
         print(book[0])
     query_name = "SELECT book_name FROM books WHERE book_id = %s"
-    mycursor.execute(query_name, (student_id))
+    mycursor.execute(query_name, (student_id,))
     name = mycursor.fetchall()
     for names in name:
         print(names[0])

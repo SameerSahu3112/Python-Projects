@@ -1,4 +1,4 @@
-def student_menu():
+def student_menu(attempts=3):
     student_choice = input("Already Registered (Y/N): ").upper()
     if student_choice == 'Y':
         print("Login")
@@ -21,6 +21,12 @@ def student_menu():
         else:
             print("Invalid ID or Password!")
             print("Password Is Your Date Of Birth (DD-MM-YYYY)")
+            attempts -= 1
+            if attempts > 0:
+                print(f"You have {attempts} attempts left.")
+                student_menu(attempts)
+                student_menu(attempts=3)
+
     else:
         print("Register")
         try:
@@ -29,7 +35,10 @@ def student_menu():
             if len(str(phone)) != 10:
                 print("Enter Valid Phone Number")
                 return
-            date_of_birth = input("Enter Your Date Of Birth (DD-MM-YYYY): ")
+            if not student_name or not phone:
+                print("Enter Valid Information")
+                return
+            date_of_birth = int(input("Enter Your Date Of Birth (DD-MM-YYYY): "))
         except ValueError:
             print("Enter Valid Information")
         print("Registration Successful!")
@@ -47,11 +56,10 @@ def student_menu():
         menu()
         return 
 
-def issue_books():
+def issue_books(id_check):
     print("Issue Books")
     try:
         book_id = int(input("Enter Book ID: "))
-        student_id = int(input("Enter Your Student ID: "))
     except ValueError:
         print("Invalid Input. Please Enter Numeric Values.")
         return
@@ -69,16 +77,15 @@ def issue_books():
         return
     query_insert = "INSERT INTO issued_books (book_id, student_id) VALUES(%s, %s)"
     query_update = "UPDATE books SET status = 'issued' WHERE book_id = %s"
-    mycursor.execute(query_insert, (book_id, student_id))
+    mycursor.execute(query_insert, (book_id, id_check))
     mycursor.execute(query_update, (book_id,))
     db.commit()
     print("Book issued successfully.")
 
-def return_books():
+def return_books(id_check):
     print("Return Books")
     try:
         book_id = int(input("Enter Book ID: "))
-        student_id = int(input("Enter Your Student ID: "))
     except ValueError:
         print("Invalid Input. Please Enter Numeric Values.")
         return
@@ -86,13 +93,13 @@ def return_books():
     db = create_connection()
     mycursor = db.cursor()
     query_check = "SELECT * FROM issued_books WHERE book_id = %s AND student_id = %s"
-    mycursor.execute(query_check, (book_id, student_id))
+    mycursor.execute(query_check, (book_id, id_check))
     result = mycursor.fetchone()
     if result is None:
         print("No record found for this book and student.")
         return
     query_check_status = "SELECT status FROM issued_books WHERE book_id = %s AND student_id = %s"
-    mycursor.execute(query_check_status, (book_id, student_id))
+    mycursor.execute(query_check_status, (book_id, id_check))
     status_result = mycursor.fetchone()
     if status_result is None or status_result[0].lower() == "returned":
         print("This book has already been returned.")
@@ -100,23 +107,18 @@ def return_books():
 
     query_delete = "UPDATE issued_books SET status = 'returned' WHERE book_id = %s AND student_id = %s"
     query_update = "UPDATE books SET status = 'available' WHERE book_id = %s"
-    mycursor.execute(query_delete, (book_id, student_id))
+    mycursor.execute(query_delete, (book_id, id_check))
     mycursor.execute(query_update, (book_id,))
     db.commit()
     print("Book returned successfully.")
 
-def profile():
+def profile(id_check):
     print("Profile")
-    try:
-        student_id = int(input("Enter Your Student ID: "))
-    except ValueError:
-        print("Invalid Input. Please Enter Numeric Values.")
-        return
     from Connection import create_connection
     db = create_connection()
     mycursor = db.cursor()
     query = "SELECT * FROM students WHERE student_id = %s"
-    mycursor.execute(query, (student_id,))
+    mycursor.execute(query, (id_check,))
     result = mycursor.fetchone()
     if result:
         print("Student ID:", result[0])
@@ -126,7 +128,7 @@ def profile():
     else:
         print("No student found with this ID.")
     history_query = "SELECT b.book_name, ib.status FROM issued_books ib JOIN books b ON ib.book_id = b.book_id WHERE ib.student_id = %s"
-    mycursor.execute(history_query, (student_id,))
+    mycursor.execute(history_query, (id_check,))
     history = mycursor.fetchall()
     if history:
         print("Borrowed Books:")
@@ -135,18 +137,13 @@ def profile():
     else:
         print("No borrowed books found.")   
 
-def borrowed_books():
+def borrowed_books(id_check):
     print("Borrowed Books")
-    try:
-        student_id = int(input("Enter Your Student ID: "))
-    except ValueError:
-        print("Invalid Input. Please Enter Numeric Values.")
-        return
     from Connection import create_connection
     db = create_connection()
     mycursor = db.cursor()
     query = "SELECT b.book_name, ib.status FROM issued_books ib JOIN books b ON ib.book_id = b.book_id WHERE ib.student_id = %s AND ib.status = 'issued'"
-    mycursor.execute(query, (student_id,))
+    mycursor.execute(query, (id_check,))
     result = mycursor.fetchall()
     if result:
         for r in result:
