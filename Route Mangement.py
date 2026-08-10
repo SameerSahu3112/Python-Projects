@@ -111,36 +111,165 @@ def delete_assignment():
     cursor.execute("DELETE FROM assignments WHERE id=%s", (id,))
     db.commit()
 
-# ---------- MENU ----------
+# ---------- DRIVER MENU ----------
+
+def driver_menu():
+    while True:
+        print("\n========== DRIVER MANAGEMENT ==========")
+        print("1. Add Driver")
+        print("2. View Drivers")
+        print("3. Update Driver")
+        print("4. Delete Driver")
+        print("0. Back")
+
+        try:
+            choice = int(input("Enter your choice: "))
+
+            if choice == 1:
+                add_driver()
+            elif choice == 2:
+                view_drivers()
+            elif choice == 3:
+                update_driver()
+            elif choice == 4:
+                delete_driver()
+            elif choice == 0:
+                break
+            else:
+                print("Invalid choice!")
+
+        except ValueError:
+            print("Please enter a valid number!")
+
+
+# ---------- BUS MENU ----------
+
+def bus_menu():
+    while True:
+        print("\n========== BUS MANAGEMENT ==========")
+        print("1. Add Bus")
+        print("2. View Buses")
+        print("3. Update Bus")
+        print("4. Delete Bus")
+        print("0. Back")
+
+        try:
+            choice = int(input("Enter your choice: "))
+
+            if choice == 1:
+                add_bus()
+            elif choice == 2:
+                view_buses()
+            elif choice == 3:
+                update_bus()
+            elif choice == 4:
+                delete_bus()
+            elif choice == 0:
+                break
+            else:
+                print("Invalid choice!")
+
+        except ValueError:
+            print("Please enter a valid number!")
+
+
+# ---------- ROUTE MENU ----------
+
+def route_menu():
+    while True:
+        print("\n========== ROUTE MANAGEMENT ==========")
+        print("1. Add Route")
+        print("2. View Routes")
+        print("3. Update Route")
+        print("4. Delete Route")
+        print("0. Back")
+
+        try:
+            choice = int(input("Enter your choice: "))
+
+            if choice == 1:
+                add_route()
+            elif choice == 2:
+                view_routes()
+            elif choice == 3:
+                update_route()
+            elif choice == 4:
+                delete_route()
+            elif choice == 0:
+                break
+            else:
+                print("Invalid choice!")
+
+        except ValueError:
+            print("Please enter a valid number!")
+
+
+# ---------- ASSIGNMENT MENU ----------
+
+def assignment_menu():
+    while True:
+        print("\n========== ASSIGNMENT MANAGEMENT ==========")
+        print("1. Add Assignment")
+        print("2. View Assignments")
+        print("3. Update Assignment")
+        print("4. Delete Assignment")
+        print("0. Back")
+
+        try:
+            choice = int(input("Enter your choice: "))
+
+            if choice == 1:
+                add_assignment()
+            elif choice == 2:
+                view_assignments()
+            elif choice == 3:
+                update_assignment()
+            elif choice == 4:
+                delete_assignment()
+            elif choice == 0:
+                break
+            else:
+                print("Invalid choice!")
+
+        except ValueError:
+            print("Please enter a valid number!")
+
+
+# ---------- MAIN MENU ----------
+
 while True:
-    print("\n1.Driver Add 2.View 3.Update 4.Delete")
-    print("5.Bus Add 6.View 7.Update 8.Delete")
-    print("9.Route Add 10.View 11.Update 12.Delete")
-    print("13.Assign 14.View 15.Update 16.Delete")
-    print("0.Exit")
 
-    ch = input("Choice: ")
+    print("\n==========================================")
+    print("       ROUTE MANAGEMENT SYSTEM")
+    print("==========================================")
+    print("1. Driver Management")
+    print("2. Bus Management")
+    print("3. Route Management")
+    print("4. Assignment Management")
+    print("0. Exit")
+    print("==========================================")
 
-    if ch == "1": add_driver()
-    elif ch == "2": view_drivers()
-    elif ch == "3": update_driver()
-    elif ch == "4": delete_driver()
+    try:
+        choice = int(input("Enter your choice: "))
 
-    elif ch == "5": add_bus()
-    elif ch == "6": view_buses()
-    elif ch == "7": update_bus()
-    elif ch == "8": delete_bus()
+        if choice == 1:
+            driver_menu()
 
-    elif ch == "9": add_route()
-    elif ch == "10": view_routes()
-    elif ch == "11": update_route()
-    elif ch == "12": delete_route()
+        elif choice == 2:
+            bus_menu()
 
-    elif ch == "13": add_assignment()
-    elif ch == "14": view_assignments()
-    elif ch == "15": update_assignment()
-    elif ch == "16": delete_assignment()
+        elif choice == 3:
+            route_menu()
 
-    elif ch == "0":
-        print("Exit")
-        break
+        elif choice == 4:
+            assignment_menu()
+
+        elif choice == 0:
+            print("\nThank you for using Route Management System!")
+            break
+
+        else:
+            print("Invalid choice!")
+
+    except ValueError:
+        print("Please enter a valid number!")
