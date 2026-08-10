@@ -1,12 +1,5 @@
-import mysql.connector
-
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="hda77063",
-    database="route_management"
-)
-
+from Connection import create_connection_route    
+db = create_connection_route()
 cursor = db.cursor()
 
 # ---------- DRIVER ----------
