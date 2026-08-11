@@ -55,8 +55,8 @@ def book_status():
     mycursor = db.cursor()
     mycursor.execute("SELECT book_name, status FROM books")
     status = mycursor.fetchall()
-    for s in status:
-        print(s[0], ":", s[1])
+    for book_name, book_status in status:
+        print(book_name, ":", book_status)
 
 def view_books():
     from Connection import create_connection

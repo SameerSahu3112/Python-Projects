@@ -1,7 +1,14 @@
 print("###### Welcome To ATM ######")
 attempt = 3
 pin = "1234"
-balance = 10000
+from Connection_Bank import create_connection
+db = create_connection()
+mycursor = db.cursor()
+query = "SELECT amount FROM customer WHERE customer_id = %s"
+id_customer = int(input("Enter Your ID: "))
+mycursor.execute(query, (id_customer))
+balance = mycursor.fetchone()
+
 def pin_check(pin,attempt):
     while True:
         user_pin = input("Please Enter Your 4-Digit PIN: ")
