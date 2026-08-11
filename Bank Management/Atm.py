@@ -28,7 +28,8 @@ def menu():
     print("1.Check Balance")
     print("2.Withdraw Money")
     print("3.Deposit Money")
-    print("4.Exit")
+    print("4.Transfer Money")
+    print("5.Exit")
 
 def check_balance():
     global balance
@@ -65,8 +66,34 @@ while True:
         deposit(amount)
 
     elif choice == "4":
+        amount = float(input("Enter Amount To Transfer: "))
+        recipient_id = int(input("Enter Recipient Customer ID: "))
+        transfer_money(amount, recipient_id)
+
+    elif choice == "5":
         print("Thank You For Using Our ATM!")
         break
     
     else:
         print("Invalid Option. Please Try Again.")
+
+def transfer_money(amount, recipient_id):
+    global balance
+    if balance < amount:
+        print("Insufficient Funds. Your Current Balance is $", balance)
+    else:
+        # Assuming we have a function to update the recipient's balance
+        recipient_id = int(input("Enter Recipient Customer ID: "))
+        from Connection_Bank import create_connection
+        db = create_connection()
+        mycursor = db.cursor()
+        mycursor.execute("SELECT amount FROM customer WHERE customer_id = %s", (recipient_id,))
+        recipient_balance = mycursor.fetchone()
+        if recipient_balance is None:
+            print("Recipient Customer ID not found.")
+        else:
+            new_recipient_balance = recipient_balance[0] + amount
+            mycursor.execute("UPDATE customer SET amount = %s WHERE customer_id = %s", (new_recipient_balance, recipient_id))
+            db.commit()
+        balance -= amount
+        print("You Have Transferred $", amount, "to Customer ID:", recipient_id)
