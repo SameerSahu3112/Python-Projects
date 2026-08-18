@@ -17,14 +17,13 @@ def student_menu(attempts=3):
         result = mycursor.fetchone()
         if result:
             print("Login Successful!")
-            menu()
+            menu(id_check)
         else:
             print("Invalid ID or Password!")
             print("Password Is Your Date Of Birth (DD-MM-YYYY)")
             attempts -= 1
             if attempts > 0:
                 print(f"You have {attempts} attempts left.")
-                student_menu(attempts)
                 student_menu(attempts=3)
 
     else:
@@ -151,7 +150,7 @@ def borrowed_books(id_check):
     else:
         print("No Current Issued books found.")
 
-def menu():
+def menu(id_check):
     while True:
         print("#### Welcome To Library ####")
         print("1. Issue Books")
@@ -166,16 +165,16 @@ def menu():
             print("Invalid Input. Please Enter A Valid Option.")
             continue
         if choice == 1:
-            issue_books()           
+            issue_books(id_check)           
         elif choice == 2:   
-            return_books()
+            return_books(id_check)
         elif choice == 3:
             from Admin import view_books
-            view_books()
+            view_books(id_check)
         elif choice == 4:
-            profile()
+            profile(id_check)
         elif choice == 5:
-            borrowed_books()
+            borrowed_books(id_check)
         elif choice == 6:
             print("Exiting.....")
             break   

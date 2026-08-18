@@ -17,11 +17,11 @@ def menu():
                 continue
             if choice == 1:
                 from Admin import pin_check
-                pin_check()
+                pin_check(pin="1234",attempt=3)
                 break
             elif choice == 2:
                 from Student import student_menu
-                student_menu()
+                student_menu(attempts=3)
                 break
             elif choice == 3:
                 print("Exiting...")
