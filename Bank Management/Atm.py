@@ -4,10 +4,15 @@ pin = "1234"
 from Connection_Bank import create_connection
 db = create_connection()
 mycursor = db.cursor()
-query = "SELECT amount FROM customer WHERE customer_id = %s"
-id_customer = int(input("Enter Your ID: "))
+query = "SELECT customer_id FROM customer WHERE customer_name = %s"ATM
+id_customer = int(input("Enter Your Name: "))
 mycursor.execute(query, (id_customer))
-balance = mycursor.fetchone()
+customer_id = mycursor.fetchone()
+if customer_id None:
+    print("Enter Valid Customer Name")
+else:
+    query = "SELECT"
+
 
 def pin_check(pin,attempt):
     while True:
@@ -36,7 +41,6 @@ def check_balance():
     print("Your Current Balance is $", balance)
 
 def withdraw(amount):
-    global balance
     if balance < amount:
         print("Insufficient Funds. Your Current Balance is $", balance)
     else:
@@ -45,7 +49,6 @@ def withdraw(amount):
         print("Your New Balance is $", balance)
 
 def deposit(amount):
-    global balance
     balance += amount
     print("You Have Deposited $", amount)
     print("Your New Balance is $", balance)
@@ -78,7 +81,6 @@ while True:
         print("Invalid Option. Please Try Again.")
 
 def transfer_money(amount, recipient_id):
-    global balance
     if balance < amount:
         print("Insufficient Funds. Your Current Balance is $", balance)
     else:
@@ -97,3 +99,8 @@ def transfer_money(amount, recipient_id):
             db.commit()
         balance -= amount
         print("You Have Transferred $", amount, "to Customer ID:", recipient_id)
+
+def update_balance():
+
+
+        

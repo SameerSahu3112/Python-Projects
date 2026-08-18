@@ -53,7 +53,7 @@ def student_menu(attempts=3):
         student_id = mycursor.fetchone()[0]
         print("Your Student ID Is ",student_id)
         db.close()
-        menu()
+        student_menu(attempts=3)
         return 
 
 def issue_books(id_check):
