@@ -8,31 +8,6 @@ class Customer:
         db.commit()
         db.close()
 
-def bank_customer_menu():
-    global customer_id
-    from Connection_Bank import create_connection
-    db = create_connection()
-    mycursor = db.cursor()
-    query = "SELECT customer_name FROM customer WHERE customer_id = customer_id"
-    mycursor.execute(query)
-    result = mycursor.fetchall()
-    customer_name = result[0][0]
-    while True:
-        print(f"##### WELCOME {customer_name} #####")
-        print("1. Account")
-        print("2. Loan")
-        print("3. Fixed Deposit")
-        print("4. Reccuring Deposit")
-        print("5. ATM")
-        print("6. Exit")
-        try:
-            choice = int(input("Enter Your Choice: "))
-        except ValueError:
-            print("Enter Valid Choice")
-
-        if choice == 6:
-            break
-
 def get_info():
     print("##### SIGN IN #####")
     customer_name = input("Enter The Name: ")
@@ -82,6 +57,32 @@ def login():
         else:
             print("Login ID OR Password Is Incorrect")
 
+def bank_customer_menu():
+    global customer_id
+    from Connection_Bank import create_connection
+    db = create_connection()
+    mycursor = db.cursor()
+    query = "SELECT customer_name FROM customer WHERE customer_id = %s"
+    mycursor.execute(query, (customer_id,))
+    result = mycursor.fetchall()
+    customer_name = result[0][0]
+    while True:
+        print(f"##### WELCOME {customer_name} #####")
+        print("1. Account")
+        print("2. Loan")
+        print("3. Fixed Deposit")
+        print("4. Reccuring Deposit")
+        print("5. ATM")
+        print("6. Exit")
+        try:
+            choice = int(input("Enter Your Choice: "))
+        except ValueError:
+            print("Enter Valid Choice")
+
+        if choice == 6:
+            break
+
+
 def customer_menu():
     while True:
         print("##### WELCOME TO MANIT BANK #####")
@@ -100,8 +101,6 @@ def customer_menu():
             break
 
 customer_menu()
-    
-
 
 
 
