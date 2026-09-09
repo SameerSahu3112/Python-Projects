@@ -906,8 +906,8 @@ def recurring_deposit_services(customer_id):
                 continue
 
             monthly_amt = float(rd[1])
-            term_months = rd[2]
-            months_paid = rd[3]
+            term_months = int(rd[2])
+            months_paid = int(rd[3])
             total_dep = float(rd[4])
 
             if months_paid >= term_months:
