@@ -138,35 +138,53 @@ def get_info():
 
 
 def login():
-    print("\n" + "=" * 45)
-    print("              CUSTOMER LOGIN                 ")
-    print("=" * 45)
-    try:
-        customer_id = int(input("Enter Your Customer ID: ").strip())
-    except ValueError:
-        print("[ERROR] Customer ID must be a numeric value.")
+    print("\n" + "=" * 52)
+    print("                CUSTOMER LOGIN                      ")
+    print("=" * 52)
+    user_identifier = input("Enter Account No. / Customer ID / Phone / Email: ").strip()
+    if not user_identifier:
+        print("[ERROR] Login identifier cannot be empty.")
         return
 
     password = input("Enter Your Password: ").strip()
 
     db = get_db()
     if not db:
+        print("[ERROR] Could not connect to MySQL database. Please verify the database server is running.")
         return
+
     cursor = db.cursor()
-    query = "SELECT customer_id, customer_name, customer_password, account_status FROM customer WHERE customer_id = %s"
-    cursor.execute(query, (customer_id,))
+    # Support login by Account Number, Customer ID, Phone, or Email
+    query = """
+    SELECT c.customer_id, c.customer_name, c.customer_password, c.account_status, a.aacount_number
+    FROM customer c
+    LEFT JOIN accounts a ON c.customer_id = a.customer_id
+    WHERE c.customer_id = %s 
+       OR a.aacount_number = %s 
+       OR c.phone = %s 
+       OR c.email = %s
+    LIMIT 1
+    """
+    cursor.execute(query, (user_identifier, user_identifier, user_identifier, user_identifier))
     customer = cursor.fetchone()
     cursor.close()
     db.close()
 
-    if customer and customer[2] == password:
-        if customer[3] != 'active':
-            print("[ALERT] Your customer account is not active. Please contact the branch.")
-            return
-        print(f"\n[SUCCESS] Welcome back, {customer[1]}!")
-        bank_customer_menu(customer_id)
+    if customer:
+        cust_id, cust_name, db_pass, status, acc_no = customer
+        # Check password with strip() to prevent accidental trailing space mismatches
+        if db_pass and db_pass.strip() == password:
+            if status != 'active':
+                print(f"\n[ALERT] Your account status is '{status.upper()}'. Please contact your branch.")
+                return
+            acc_info = f" (A/C: {acc_no})" if acc_no else ""
+            print(f"\n[SUCCESS] Welcome back, {cust_name.strip()}!{acc_info}")
+            bank_customer_menu(cust_id)
+        else:
+            print("\n[ERROR] Incorrect password entered. Please try again.")
     else:
-        print("[ERROR] Invalid Customer ID or Password. Please try again.")
+        print(f"\n[ERROR] No account found matching '{user_identifier}'.")
+        print("Tip: You can log in using your 10-digit Account Number, Customer ID, Phone Number, or Email.")
 
 
 def get_or_create_primary_account(customer_id):

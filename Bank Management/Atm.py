@@ -8,8 +8,8 @@ def get_db():
     from Connection_Bank import create_connection
     return create_connection()
 
-def verify_account(aacount_number):
-    """Checks if account exists and returns (account_id, aacount_number, balance, customer_account_status, customer_name, customer_password)."""
+def verify_account(identifier):
+    """Checks if account exists by Account Number, Customer ID, or Phone Number."""
     db = get_db()
     if not db:
         return None
@@ -18,9 +18,10 @@ def verify_account(aacount_number):
     SELECT a.account_id, a.aacount_number, a.balance, a.customer_account_status, c.customer_name, c.customer_password
     FROM accounts a
     JOIN customer c ON a.customer_id = c.customer_id
-    WHERE a.aacount_number = %s
+    WHERE a.aacount_number = %s OR a.customer_id = %s OR c.phone = %s
+    LIMIT 1
     """
-    cursor.execute(query, (aacount_number,))
+    cursor.execute(query, (identifier, identifier, identifier))
     account = cursor.fetchone()
     cursor.close()
     db.close()
@@ -46,11 +47,11 @@ def atm_menu(default_account_number=None):
     if default_account_number:
         acc_num = str(default_account_number).strip()
     else:
-        acc_num = input("Please Enter Your 10-Digit Account Number: ").strip()
+        acc_num = input("Enter Account Number / Customer ID / Phone: ").strip()
 
     acc = verify_account(acc_num)
     if not acc:
-        print("[ERROR] Account Number Not Found! Please check and try again.")
+        print(f"[ERROR] No account found matching '{acc_num}'. Please check and try again.")
         return
 
     account_id, aacount_number, balance, account_status, customer_name, actual_password = acc
@@ -65,9 +66,9 @@ def atm_menu(default_account_number=None):
     authenticated = False
     while remaining_attempts > 0:
         entered_pin = input(f"Enter Your ATM PIN / Password ({remaining_attempts} attempt(s) left): ").strip()
-        if entered_pin == actual_password:
+        if entered_pin and actual_password and entered_pin == actual_password.strip():
             authenticated = True
-            print(f"[SUCCESS] Access Granted! Welcome, {customer_name}.")
+            print(f"[SUCCESS] Access Granted! Welcome, {customer_name.strip()}.")
             break
         else:
             remaining_attempts -= 1
