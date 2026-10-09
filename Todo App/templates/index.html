@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANIT TODO | Your Daily Planner</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0b12;
+            color: #f5f5fa;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 8%;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        .nav-tag {
+            color: #a5a5b5;
+            font-size: 13px;
+            border: 1px solid #292936;
+            padding: 9px 15px;
+            border-radius: 30px;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 75px 25px 50px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 9px 15px;
+            border: 1px solid #39304f;
+            border-radius: 30px;
+            color: #c4b5fd;
+            background: #171323;
+            font-size: 12px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: clamp(42px, 7vw, 76px);
+            line-height: 1.08;
+            letter-spacing: -4px;
+            font-weight: 800;
+        }
+
+        h1 span {
+            background: linear-gradient(90deg, #a78bfa, #e879f9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .description {
+            max-width: 550px;
+            margin: 25px auto 32px;
+            color: #a3a3b5;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.25s;
+        }
+
+        .primary {
+            background: #a78bfa;
+            color: #171023;
+        }
+
+        .primary:hover {
+            background: #c4b5fd;
+            transform: translateY(-3px);
+        }
+
+        .secondary {
+            border: 1px solid #353544;
+            color: #f5f5fa;
+        }
+
+        .secondary:hover {
+            background: #1b1b29;
+        }
+
+        .preview {
+            margin: 75px auto 0;
+            max-width: 760px;
+            text-align: left;
+            padding: 25px;
+            border: 1px solid #292938;
+            border-radius: 22px;
+            background: linear-gradient(145deg, #171722, #101018);
+            box-shadow: 0 25px 100px #8b5cf622;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .preview-header h2 {
+            font-size: 19px;
+        }
+
+        .today {
+            color: #a78bfa;
+            font-size: 12px;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 17px 5px;
+            border-bottom: 1px solid #282833;
+            color: #d4d4df;
+            font-size: 14px;
+        }
+
+        .task:last-child {
+            border-bottom: none;
+        }
+
+        .circle {
+            width: 19px;
+            height: 19px;
+            border: 1.5px solid #77718d;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .done .circle {
+            background: #a78bfa;
+            border-color: #a78bfa;
+            position: relative;
+        }
+
+        .done .circle::after {
+            content: "✓";
+            position: absolute;
+            color: #171023;
+            font-size: 12px;
+            left: 4px;
+            top: 1px;
+        }
+
+        .done .task-name {
+            text-decoration: line-through;
+            color: #777789;
+        }
+
+        .task-label {
+            margin-left: auto;
+            font-size: 11px;
+            color: #c4b5fd;
+            background: #29213c;
+            padding: 6px 9px;
+            border-radius: 7px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 70px;
+            text-align: left;
+        }
+
+        .feature {
+            padding: 23px;
+            border: 1px solid #292938;
+            background: #12121b;
+            border-radius: 16px;
+        }
+
+        .feature .icon {
+            font-size: 24px;
+        }
+
+        .feature h3 {
+            font-size: 15px;
+            margin: 17px 0 9px;
+        }
+
+        .feature p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #9999ad;
+        }
+
+        footer {
+            text-align: center;
+            padding: 35px 15px;
+            color: #777789;
+            font-size: 12px;
+            border-top: 1px solid #20202b;
+            margin-top: 55px;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 20px 6%;
+            }
+
+            main {
+                padding-top: 55px;
+            }
+
+            h1 {
+                letter-spacing: -2px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .preview {
+                padding: 18px;
+                margin-top: 55px;
+            }
+
+            .task {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">MANIT<span> TODO.</span></div>
+        <div class="nav-tag">Your personal productivity space</div>
+    </nav>
+
+    <main>
+        <div class="badge">✦ A little more focus, every day</div>
+
+        <h1>Less chaos.<br>More <span>done.</span></h1>
+
+        <p class="description">
+            Your day has a lot going on. Keep your tasks organized,
+            focus on what matters, and turn small steps into big progress.
+        </p>
+
+        <div class="buttons">
+            <a href="{{ url_for('tasks') }}" class="btn primary">
+                Get Started &nbsp; →
+            </a>
+            <a href="#features" class="btn secondary">
+                Explore Features
+            </a>
+        </div>
+
+        <section class="preview">
+            <div class="preview-header">
+                <h2>Your daily overview</h2>
+                <span class="today">A fresh start ✦</span>
+            </div>
+
+            <div class="task done">
+                <div class="circle"></div>
+                <span class="task-name">Review today's lecture notes</span>
+                <span class="task-label">Completed</span>
+            </div>
+
+            <div class="task">
+                <div class="circle"></div>
+                <span class="task-name">Finish the Python practice</span>
+                <span class="task-label">Study</span>
+            </div>
+
+            <div class="task">
+                <div class="circle"></div>
+                <span class="task-name">Plan tomorrow's priorities</span>
+                <span class="task-label">Personal</span>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="feature">
+                <div class="icon">🎯</div>
+                <h3>Stay Focused</h3>
+                <p>Know what needs your attention instead of keeping everything in your head.</p>
+            </div>
+
+            <div class="feature">
+                <div class="icon">⚡</div>
+                <h3>Keep It Simple</h3>
+                <p>A clean workspace that helps you spend less time organizing and more time doing.</p>
+            </div>
+
+            <div class="feature">
+                <div class="icon">📈</div>
+                <h3>Build Momentum</h3>
+                <p>Complete small tasks consistently and make progress one day at a time.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Made with focus & ♥ · MANIT © 2026
+    </footer>
+
+</body>
+</html>
+

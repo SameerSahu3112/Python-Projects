@@ -6,7 +6,7 @@ def student_menu(attempts=3):
             id_check = int(input("Enter Your Student ID: "))
             password_check = int(input("Enter Your Password: "))
             if not id_check or not password_check:
-                print("Forgot Password? Your Password Is Your Date Of Birth (DD-MM-YYYY)")
+                print("Forgot Password? Your Password Is Your Date Of Birth (YYYY-MM-DD)")
         except ValueError:
             print("Enter Valid ID")
         from Connection import create_connection
@@ -20,7 +20,7 @@ def student_menu(attempts=3):
             menu(id_check)
         else:
             print("Invalid ID or Password!")
-            print("Password Is Your Date Of Birth (DD-MM-YYYY)")
+            print("Password Is Your Date Of Birth (YYYY-MM-DD)")
             attempts -= 1
             if attempts > 0:
                 print(f"You have {attempts} attempts left.")
@@ -37,7 +37,7 @@ def student_menu(attempts=3):
             if not student_name or not phone:
                 print("Enter Valid Information")
                 return
-            date_of_birth = int(input("Enter Your Date Of Birth (DD-MM-YYYY): "))
+            date_of_birth = int(input("Enter Your Date Of Birth (YYYY-MM-DD): "))
         except ValueError:
             print("Enter Valid Information")
         print("Registration Successful!")
