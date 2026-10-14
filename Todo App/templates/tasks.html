@@ -10,6 +10,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
 
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+          {% for todo in todo %}
+            <div class="badge">{{todo.id}} - {{todo.title}} - {{todo.description}} - {{todo.due_date}}</div>
+        {% endfor %}
+            </tbody>
+        </table>
+
     <style>
         * {
             margin: 0;
@@ -44,16 +60,11 @@
             color: #a78bfa;
         }
 
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
         .nav-right a {
             text-decoration: none;
             color: #b4b4c5;
             font-size: 13px;
+            margin-left: 20px;
         }
 
         .nav-right a:hover {
@@ -83,6 +94,14 @@
             font-size: clamp(30px, 5vw, 42px);
             letter-spacing: -1.5px;
             margin-bottom: 12px;
+        }
+
+        .purple {
+            color: #a78bfa;
+        }
+
+        .green {
+            color: #6ee7b7;
         }
 
         .subtitle {
@@ -116,14 +135,6 @@
             font-weight: 800;
         }
 
-        .purple {
-            color: #a78bfa;
-        }
-
-        .green {
-            color: #6ee7b7;
-        }
-
         .task-panel {
             background: #12121b;
             border: 1px solid #292938;
@@ -151,14 +162,14 @@
             padding: 7px 10px;
         }
 
+        input, select, button {
+            font-family: inherit;
+        }
+
         .add-form {
             display: flex;
             gap: 10px;
             margin-bottom: 22px;
-        }
-
-        input, select, button {
-            font-family: inherit;
         }
 
         .task-input {
@@ -196,19 +207,17 @@
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .add-btn:hover {
             background: #c4b5fd;
-            transform: translateY(-1px);
         }
 
         .filters {
             display: flex;
             gap: 9px;
             flex-wrap: wrap;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .filter-btn {
@@ -227,71 +236,51 @@
             border-color: #63508a;
         }
 
-        .task-list {
-            list-style: none;
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #292938;
+            border-radius: 12px;
         }
 
-        .task-item {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            padding: 18px 4px;
-            border-bottom: 1px solid #282833;
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
         }
 
-        .task-item:last-child {
-            border-bottom: none;
+        .task-table th {
+            background: #1a1a27;
+            color: #a78bfa;
+            padding: 15px;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
-        .task-check {
-            appearance: none;
-            width: 19px;
-            height: 19px;
-            border: 1.5px solid #77718d;
-            border-radius: 50%;
-            cursor: pointer;
-            flex-shrink: 0;
-            position: relative;
+        .task-table td {
+            padding: 16px 15px;
+            border-top: 1px solid #282833;
+            color: #d5d5e3;
         }
 
-        .task-check:checked {
-            background: #a78bfa;
-            border-color: #a78bfa;
-        }
-
-        .task-check:checked::after {
-            content: "✓";
-            color: #171023;
-            font-size: 12px;
-            font-weight: 800;
-            position: absolute;
-            top: 1px;
-            left: 4px;
-        }
-
-        .task-info {
-            flex: 1;
-            min-width: 0;
+        .task-table tbody tr:hover {
+            background: #191925;
         }
 
         .task-name {
-            font-size: 13px;
             overflow-wrap: anywhere;
+            min-width: 150px;
             line-height: 1.6;
         }
 
-        .task-item.completed .task-name {
+        .completed .task-name {
             text-decoration: line-through;
             color: #777789;
         }
 
-        .task-meta {
-            margin-top: 6px;
-            font-size: 11px;
-            color: #858599;
-        }
-
         .priority {
+            display: inline-block;
             font-size: 10px;
             padding: 6px 8px;
             border-radius: 6px;
@@ -311,6 +300,20 @@
         .low {
             background: #18352d;
             color: #6ee7b7;
+        }
+
+        .status-btn {
+            background: transparent;
+            color: #c4b5fd;
+            border: 1px solid #49405d;
+            border-radius: 7px;
+            padding: 7px 9px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .status-btn:hover {
+            background: #29213c;
         }
 
         .delete-btn {
@@ -334,11 +337,6 @@
             text-align: center;
             padding: 45px 10px;
             color: #9999ad;
-        }
-
-        .empty-state .empty-icon {
-            font-size: 35px;
-            margin-bottom: 14px;
         }
 
         .empty-state h3 {
@@ -365,12 +363,13 @@
                 padding: 19px 5%;
             }
 
-            .nav-right {
-                gap: 12px;
+            .logo {
+                font-size: 20px;
             }
 
             .nav-right a {
                 font-size: 12px;
+                margin-left: 10px;
             }
 
             .container {
@@ -415,18 +414,25 @@
                 height: 43px;
             }
 
-            .task-item {
-                gap: 9px;
-            }
-
-            .priority {
-                display: none;
+            .task-table th,
+            .task-table td {
+                padding: 12px 10px;
+                font-size: 12px;
             }
         }
     </style>
 </head>
 
 <body>
+
+    <nav>
+        <a href="/" class="logo">MANIT<span> TODO</span></a>
+
+        <div class="nav-right">
+            <a href="/">Home</a>
+            <a href="#task-section">My Tasks</a>
+        </div>
+    </nav>
 
     <main class="container">
 
@@ -442,17 +448,17 @@
         <section class="stats">
             <div class="stat-card">
                 <p class="stat-label">Total Tasks</p>
-                <p class="stat-number" id="total-count">3</p>
+                <p class="stat-number" id="total-count">0</p>
             </div>
 
             <div class="stat-card">
                 <p class="stat-label">Completed</p>
-                <p class="stat-number green" id="completed-count">1</p>
+                <p class="stat-number green" id="completed-count">0</p>
             </div>
 
             <div class="stat-card">
                 <p class="stat-label">Remaining</p>
-                <p class="stat-number purple" id="remaining-count">2</p>
+                <p class="stat-number purple" id="remaining-count">0</p>
             </div>
         </section>
 
@@ -460,7 +466,7 @@
 
             <div class="panel-heading">
                 <h2>My Tasks</h2>
-                <span class="task-count" id="visible-count">3 tasks</span>
+                <span class="task-count" id="visible-count">0 tasks</span>
             </div>
 
             <form class="add-form" id="add-form">
@@ -484,15 +490,33 @@
             </form>
 
             <div class="filters">
-                <button class="filter-btn active" data-filter="all">All Tasks</button>
-                <button class="filter-btn" data-filter="active">Pending</button>
-                <button class="filter-btn" data-filter="completed">Completed</button>
+                <button type="button" class="filter-btn active" data-filter="all">
+                    All Tasks
+                </button>
+                <button type="button" class="filter-btn" data-filter="active">
+                    Pending
+                </button>
+                <button type="button" class="filter-btn" data-filter="completed">
+                    Completed
+                </button>
             </div>
 
-            <ul class="task-list" id="task-list"></ul>
+            <div class="table-wrapper">
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Task</th>
+                            <th>Priority</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="task-list"></tbody>
+                </table>
+            </div>
 
             <div class="empty-state" id="empty-state">
-                <div class="empty-icon">✦</div>
                 <h3 id="empty-title">All clear!</h3>
                 <p id="empty-message">Add a task above to get started.</p>
             </div>
@@ -504,6 +528,5 @@
     <footer>
         MANIT TODO © 2026 · Small steps, meaningful progress.
     </footer>
-
 </body>
 </html>
