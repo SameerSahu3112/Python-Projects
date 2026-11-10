@@ -9,6 +9,7 @@ Features: Product catalog, user auth, cart, wishlist, coupons/discounts,
 Run: uvicorn main:app --reload --port 8000
 """
 
+import os
 import json
 import math
 import re
@@ -41,9 +42,13 @@ app.add_middleware(
     max_age=86400 * 7,  # 7 days
 )
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+
 # Mount static files and templates
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
 # ─── Template Helpers & Context ───────────────────────────────
@@ -96,7 +101,7 @@ def get_cart_count(request: Request) -> int:
         cur = get_cursor(conn)
         cur.execute("SELECT COALESCE(SUM(quantity), 0) AS cnt FROM cart_items WHERE user_id = %s", (user["user_id"],))
         row = cur.fetchone()
-        return row["cnt"] if row else 0
+        return int(row["cnt"]) if row else 0
 
 
 def get_wishlist_count(request: Request) -> int:
@@ -108,7 +113,7 @@ def get_wishlist_count(request: Request) -> int:
         cur = get_cursor(conn)
         cur.execute("SELECT COUNT(*) AS cnt FROM wishlist WHERE user_id = %s", (user["user_id"],))
         row = cur.fetchone()
-        return row["cnt"] if row else 0
+        return int(row["cnt"]) if row else 0
 
 
 def base_context(request: Request) -> dict:
@@ -175,7 +180,7 @@ async def homepage(request: Request):
         """)
         ctx["categories"] = cur.fetchall()
 
-    return templates.TemplateResponse("index.html", ctx)
+    return templates.TemplateResponse(request=request, name="index.html", context=ctx)
 
 
 @app.get("/products", response_class=HTMLResponse)
@@ -268,7 +273,7 @@ async def products_page(
     ctx["total_pages"] = total_pages
     ctx["total_products"] = total
 
-    return templates.TemplateResponse("products.html", ctx)
+    return templates.TemplateResponse(request=request, name="products.html", context=ctx)
 
 
 @app.get("/product/{slug}", response_class=HTMLResponse)
@@ -326,7 +331,7 @@ async def product_detail_page(request: Request, slug: str):
             ctx["in_wishlist"] = cur.fetchone() is not None
 
     ctx["product"] = product
-    return templates.TemplateResponse("product_detail.html", ctx)
+    return templates.TemplateResponse(request=request, name="product_detail.html", context=ctx)
 
 
 @app.get("/cart", response_class=HTMLResponse)
@@ -365,7 +370,7 @@ async def cart_page(request: Request):
     ctx["total"] = total
     ctx["applied_coupon"] = request.session.get("applied_coupon")
 
-    return templates.TemplateResponse("cart.html", ctx)
+    return templates.TemplateResponse(request=request, name="cart.html", context=ctx)
 
 
 @app.get("/checkout", response_class=HTMLResponse)
@@ -419,7 +424,7 @@ async def checkout_page(request: Request):
     ctx["total"] = total
     ctx["applied_coupon"] = applied_coupon
 
-    return templates.TemplateResponse("checkout.html", ctx)
+    return templates.TemplateResponse(request=request, name="checkout.html", context=ctx)
 
 
 @app.get("/orders", response_class=HTMLResponse)
@@ -448,10 +453,12 @@ async def orders_page(request: Request):
                 JOIN categories c ON p.category_id = c.category_id
                 WHERE oi.order_id = %s
             """, (order["order_id"],))
-            order["items"] = cur.fetchall()
+            items_list = cur.fetchall()
+            order["order_items"] = items_list
+            order["items"] = items_list
 
     ctx["orders"] = orders
-    return templates.TemplateResponse("orders.html", ctx)
+    return templates.TemplateResponse(request=request, name="orders.html", context=ctx)
 
 
 @app.get("/order/{order_number}", response_class=HTMLResponse)
@@ -479,7 +486,9 @@ async def order_detail_page(request: Request, order_number: str):
             JOIN categories c ON p.category_id = c.category_id
             WHERE oi.order_id = %s
         """, (order["order_id"],))
-        order["items"] = cur.fetchall()
+        order_items_list = cur.fetchall()
+        order["order_items"] = order_items_list
+        order["items"] = order_items_list
 
         # Shipping address
         if order.get("shipping_address_id"):
@@ -487,7 +496,7 @@ async def order_detail_page(request: Request, order_number: str):
             order["address"] = cur.fetchone()
 
     ctx["order"] = order
-    return templates.TemplateResponse("order_confirmation.html", ctx)
+    return templates.TemplateResponse(request=request, name="order_confirmation.html", context=ctx)
 
 
 @app.get("/wishlist", response_class=HTMLResponse)
@@ -511,7 +520,7 @@ async def wishlist_page(request: Request):
         """, (user["user_id"],))
         ctx["wishlist_items"] = cur.fetchall()
 
-    return templates.TemplateResponse("wishlist.html", ctx)
+    return templates.TemplateResponse(request=request, name="wishlist.html", context=ctx)
 
 
 @app.get("/profile", response_class=HTMLResponse)
@@ -538,7 +547,7 @@ async def profile_page(request: Request):
         cur.execute("SELECT COUNT(*) AS cnt FROM orders WHERE user_id = %s", (user["user_id"],))
         ctx["order_count"] = cur.fetchone()["cnt"]
 
-    return templates.TemplateResponse("profile.html", ctx)
+    return templates.TemplateResponse(request=request, name="profile.html", context=ctx)
 
 
 # ─── Auth Pages ───────────────────────────────────────────────
@@ -548,7 +557,7 @@ async def login_page(request: Request):
     if get_user(request):
         return RedirectResponse("/", status_code=303)
     ctx = base_context(request)
-    return templates.TemplateResponse("login.html", ctx)
+    return templates.TemplateResponse(request=request, name="login.html", context=ctx)
 
 
 @app.post("/login")
@@ -583,7 +592,7 @@ async def register_page(request: Request):
     if get_user(request):
         return RedirectResponse("/", status_code=303)
     ctx = base_context(request)
-    return templates.TemplateResponse("register.html", ctx)
+    return templates.TemplateResponse(request=request, name="register.html", context=ctx)
 
 
 @app.post("/register")
@@ -676,7 +685,7 @@ async def api_cart_add(request: Request):
 
         # Get updated cart count
         cur.execute("SELECT COALESCE(SUM(quantity), 0) AS cnt FROM cart_items WHERE user_id = %s", (user["user_id"],))
-        cart_count = cur.fetchone()["cnt"]
+        cart_count = int(cur.fetchone()["cnt"])
 
     return JSONResponse({
         "success": True,
@@ -728,7 +737,7 @@ async def api_cart_update(request: Request):
 
     return JSONResponse({
         "success": True,
-        "cart_count": totals["cart_count"],
+        "cart_count": int(totals["cart_count"]),
         "subtotal": subtotal,
         "tax": tax,
         "shipping": shipping,
@@ -748,7 +757,7 @@ async def api_cart_remove(request: Request, product_id: int):
                     (user["user_id"], product_id))
 
         cur.execute("SELECT COALESCE(SUM(quantity), 0) AS cnt FROM cart_items WHERE user_id = %s", (user["user_id"],))
-        cart_count = cur.fetchone()["cnt"]
+        cart_count = int(cur.fetchone()["cnt"])
 
     return JSONResponse({"success": True, "message": "Removed from bag.", "cart_count": cart_count})
 
@@ -835,7 +844,7 @@ async def api_apply_coupon(request: Request):
     })
 
 
-@app.post("/api/coupon/remove")
+@app.api_route("/api/coupon/remove", methods=["POST", "DELETE"])
 async def api_remove_coupon(request: Request):
     request.session.pop("applied_coupon", None)
     return JSONResponse({"success": True, "message": "Coupon removed."})
@@ -865,7 +874,7 @@ async def api_wishlist_toggle(request: Request, product_id: int):
             action = "added"
 
         cur.execute("SELECT COUNT(*) AS cnt FROM wishlist WHERE user_id = %s", (user["user_id"],))
-        wishlist_count = cur.fetchone()["cnt"]
+        wishlist_count = int(cur.fetchone()["cnt"])
 
     return JSONResponse({
         "success": True,
@@ -887,7 +896,7 @@ async def api_submit_review(request: Request):
     product_id = body.get("product_id")
     rating = body.get("rating")
     title = body.get("title", "")
-    review_text = body.get("review_text", "")
+    review_text = body.get("review_text") or body.get("text", "")
 
     if not product_id or not rating or rating < 1 or rating > 5:
         return JSONResponse({"success": False, "message": "Invalid review data."}, status_code=400)
@@ -1116,7 +1125,7 @@ async def admin_dashboard(request: Request):
     }
     ctx["recent_orders"] = recent_orders
 
-    return templates.TemplateResponse("admin/dashboard.html", ctx)
+    return templates.TemplateResponse(request=request, name="admin/dashboard.html", context=ctx)
 
 
 # ─── Profile Update ──────────────────────────────────────────

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Apple Store India — Official Store{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="hero-section">
+    <div class="hero-content">
+        <span class="hero-badge">Special Online Store Offer</span>
+        <h1 class="hero-title">The best way to buy the products you love.</h1>
+        <p class="hero-subtitle">Experience the full power of Apple Intelligence with the new iPhone 16 Pro, MacBook Air with M4, and Apple Watch Series 10.</p>
+        <div class="hero-actions">
+            <a href="/products" class="btn btn-primary btn-lg">Shop Now</a>
+            <a href="/products?category=iPhone" class="btn btn-outline btn-lg">Explore iPhone 16</a>
+        </div>
+    </div>
+</section>
+
+<!-- Category Carousel / Grid -->
+<section class="container py-4">
+    <div class="section-header">
+        <h2 class="section-title">Explore by Category</h2>
+        <a href="/products" class="link-arrow">All Products &rarr;</a>
+    </div>
+    <div class="category-grid">
+        {% for cat in categories %}
+        <a href="/products?category={{ cat.category_name }}" class="category-card">
+            <span class="category-icon">{{ cat.icon }}</span>
+            <h3 class="category-name">{{ cat.category_name }}</h3>
+            <span class="category-count">{{ cat.product_count }} items</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Promotional Student Banner -->
+<section class="container py-2">
+    <div class="promo-banner">
+        <div class="promo-content">
+            <span class="promo-tag">🎓 Student & Teacher Discount</span>
+            <h2>Save up to 20% with Education Savings.</h2>
+            <p>Use coupon code <strong>STUDENT20</strong> at checkout to get 20% off Mac and iPad purchases (up to ₹15,000).</p>
+            <div class="promo-codes">
+                <span class="coupon-chip" onclick="navigator.clipboard.writeText('STUDENT20'); alert('Code STUDENT20 copied!');">Code: STUDENT20 (Click to copy)</span>
+                <span class="coupon-chip" onclick="navigator.clipboard.writeText('APPLE10'); alert('Code APPLE10 copied!');">Code: APPLE10 (10% Off)</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="container py-4">
+    <div class="section-header">
+        <h2 class="section-title">Featured Products</h2>
+        <span class="text-secondary">Hand-picked flagship devices</span>
+    </div>
+    <div class="product-grid">
+        {% for p in featured_products %}
+        <div class="product-card">
+            <div class="card-image-wrap">
+                <span class="product-emoji">{{ p.category_icon or '🍎' }}</span>
+                {% if p.mrp and p.mrp > p.price %}
+                <span class="discount-badge">Save {{ ((p.mrp - p.price) / p.mrp * 100)|round|int }}%</span>
+                {% endif %}
+                <button class="wishlist-btn btn-wishlist-toggle" data-product-id="{{ p.product_id }}" title="Save to Wishlist">♡</button>
+            </div>
+            <div class="card-body">
+                <div class="card-meta">
+                    <span class="category-tag">{{ p.category_name }}</span>
+                    {% if p.rating_avg > 0 %}
+                    <span class="rating-tag">★ {{ p.rating_avg }} ({{ p.rating_count }})</span>
+                    {% endif %}
+                </div>
+                <h3 class="product-title">
+                    <a href="/product/{{ p.slug }}">{{ p.product_name }}</a>
+                </h3>
+                <p class="product-desc">{{ p.description[:85] }}{% if p.description|length > 85 %}...{% endif %}</p>
+                <div class="price-row">
+                    <span class="price-current">{{ p.price|inr }}</span>
+                    {% if p.mrp and p.mrp > p.price %}
+                    <span class="price-mrp">{{ p.mrp|inr }}</span>
+                    {% endif %}
+                </div>
+                <div class="card-footer-actions">
+                    <a href="/product/{{ p.slug }}" class="btn btn-outline btn-sm">Details</a>
+                    <button class="btn btn-primary btn-sm btn-add-to-cart" data-product-id="{{ p.product_id }}">Add to Bag</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Value Propositions -->
+<section class="container py-4">
+    <div class="values-grid">
+        <div class="value-item">
+            <div class="value-icon">🚚</div>
+            <h3>Free Delivery</h3>
+            <p>Free standard delivery on all orders above ₹50,000 across India.</p>
+        </div>
+        <div class="value-item">
+            <div class="value-icon">💳</div>
+            <h3>Flexible Payments</h3>
+            <p>Pay with Cash on Delivery, UPI, Credit/Debit cards, or Net Banking.</p>
+        </div>
+        <div class="value-item">
+            <div class="value-icon">🛡️</div>
+            <h3>1-Year Apple Warranty</h3>
+            <p>Official 1-year limited warranty and up to 90 days of complimentary support.</p>
+        </div>
+        <div class="value-item">
+            <div class="value-icon">🔄</div>
+            <h3>Easy 14-Day Returns</h3>
+            <p>Hassle-free return policy if you change your mind.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

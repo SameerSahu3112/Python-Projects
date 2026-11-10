@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Control Center — Apple Store India{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="admin-header">
+        <div>
+            <span class="badge-role admin">Admin Portal</span>
+            <h1 class="page-title mt-1">Store Dashboard & Analytics</h1>
+            <p class="text-secondary">Overview of store revenue, sales velocity, catalog inventory, and customers.</p>
+        </div>
+        <div class="admin-actions">
+            <a href="/products" class="btn btn-outline btn-sm">Preview Public Store &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="stats-grid mt-4">
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+                <span class="stat-label">Total Store Revenue</span>
+                <span class="stat-val text-primary">{{ stats.total_revenue|inr }}</span>
+                <small class="text-success">✔ Real-time confirmed orders</small>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🛍️</div>
+            <div class="stat-info">
+                <span class="stat-label">Total Orders Placed</span>
+                <span class="stat-val">{{ stats.total_orders }}</span>
+                <small class="text-secondary">Across all payment channels</small>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📱</div>
+            <div class="stat-info">
+                <span class="stat-label">Live Active Products</span>
+                <span class="stat-val">{{ stats.total_products }}</span>
+                <small class="text-secondary">In stock in MySQL</small>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <span class="stat-label">Registered Customers</span>
+                <span class="stat-val">{{ stats.total_customers }}</span>
+                <small class="text-secondary">Verified buyer accounts</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="admin-table-card mt-5">
+        <div class="card-header-clean">
+            <h2>Recent Store Orders</h2>
+            <span class="text-secondary">Latest 20 transactions</span>
+        </div>
+
+        {% if recent_orders %}
+        <div class="table-responsive">
+            <table class="table-clean">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Date & Time</th>
+                        <th>Payment</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ord in recent_orders %}
+                    <tr>
+                        <td><strong>{{ ord.order_number }}</strong></td>
+                        <td>{{ ord.full_name }}</td>
+                        <td><small>{{ ord.placed_at.strftime('%d %b %Y, %I:%M %p') if ord.placed_at else '' }}</small></td>
+                        <td><span class="badge-payment">{{ ord.payment_method }}</span></td>
+                        <td><strong>{{ ord.total_amount|inr }}</strong></td>
+                        <td><span class="badge-status {{ ord.order_status|lower }}">{{ ord.order_status }}</span></td>
+                        <td><a href="/order/{{ ord.order_number }}" class="btn btn-outline btn-sm">Receipt</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state p-4">
+            <p>No customer orders placed yet. Place your first order to see it populate here!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

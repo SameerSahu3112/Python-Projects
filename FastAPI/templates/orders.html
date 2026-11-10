@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders — Apple Store India{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="orders-header">
+        <h1 class="page-title">My Orders</h1>
+        <p class="text-secondary">Track, review, and manage your recent Apple purchases.</p>
+    </div>
+
+    {% if orders %}
+    <div class="orders-list">
+        {% for o in orders %}
+        <div class="order-card">
+            <div class="order-card-header">
+                <div class="order-meta-info">
+                    <div>
+                        <span class="meta-label">Order Number</span>
+                        <strong>{{ o.order_number }}</strong>
+                    </div>
+                    <div>
+                        <span class="meta-label">Date Placed</span>
+                        <span>{{ o.placed_at.strftime('%d %b %Y') if o.placed_at else '' }}</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">Payment</span>
+                        <span>{{ o.payment_method }} ({{ o.payment_status }})</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">Total Amount</span>
+                        <strong>{{ o.total_amount|inr }}</strong>
+                    </div>
+                </div>
+                <div class="order-status-badge-wrap">
+                    <span class="badge-status {{ o.order_status|lower }}">{{ o.order_status }}</span>
+                </div>
+            </div>
+
+            <div class="order-card-body">
+                <div class="order-items-compact">
+                    {% for it in o.order_items %}
+                    <div class="order-item-compact-row">
+                        <span class="item-emoji">{{ it.category_icon or '🍎' }}</span>
+                        <div class="item-info">
+                            <a href="/product/{{ it.slug }}" class="item-title">{{ it.product_name }}</a>
+                            <span class="item-sub">Qty: {{ it.quantity }} × {{ it.unit_price|inr }}</span>
+                        </div>
+                        <span class="item-total">{{ it.total_price|inr }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="order-card-footer">
+                <a href="/order/{{ o.order_number }}" class="btn btn-outline btn-sm">Order Confirmation & Receipt &rarr;</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state py-5">
+        <div class="empty-state-icon">📦</div>
+        <h2>No orders found</h2>
+        <p class="text-secondary">You haven't placed any orders yet. Discover our latest products.</p>
+        <a href="/products" class="btn btn-primary btn-lg mt-3">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

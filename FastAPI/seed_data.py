@@ -94,14 +94,15 @@ def setup_schema():
         sql_content = sql_content.replace(line, "")
 
     # Split on semicolons and execute each statement
-    statements = [s.strip() for s in sql_content.split(";") if s.strip() and not s.strip().startswith("--")]
-    for stmt in statements:
-        # Skip pure comment blocks
-        clean = "\n".join(l for l in stmt.split("\n") if not l.strip().startswith("--"))
-        if clean.strip():
+    raw_statements = sql_content.split(";")
+    executed_count = 0
+    for raw in raw_statements:
+        clean = "\n".join(l for l in raw.split("\n") if not l.strip().startswith("--")).strip()
+        if clean:
             cur.execute(clean)
+            executed_count += 1
 
-    print(f"   ✅ Executed {len(statements)} schema statements — all tables created")
+    print(f"   ✅ Executed {executed_count} schema statements — all tables created")
     cur.close()
     conn.close()
 
